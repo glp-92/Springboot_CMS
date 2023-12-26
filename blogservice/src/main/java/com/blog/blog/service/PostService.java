@@ -11,6 +11,7 @@ public interface PostService {
 	Post editPost(EditPost request);
 	List<Post> getAllPosts();
 	boolean deletePost(String postId);
+	List<Post> getPostsFiltered(String categorieName, String keyword, int page, boolean reverse);
 	/*Post getPostByAuthor(String author);
 	Post getPostByCategorie(String categorieId);*/
 }

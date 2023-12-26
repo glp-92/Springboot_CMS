@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blog.blog.model.pojo.Post;
@@ -27,10 +28,15 @@ public class PostController {
 	private final PostService service;
 	
 	@GetMapping("/post")
-	public ResponseEntity<List<Post>> getPosts () {
+	public ResponseEntity<List<Post>> getFilteredPosts (
+			@RequestParam(name = "categorie", required = false) String categorie,
+			@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "page", required = true) int page,
+			@RequestParam(name = "reverse", required = false) boolean reverse
+			) {
 		try {
-			List<Post> posts = service.getAllPosts();
-			if (posts != null) {
+			List<Post> posts = service.getPostsFiltered(categorie, keyword, page, reverse);
+			if (!posts.isEmpty()) {
 	            return ResponseEntity.status(HttpStatus.OK).body(posts);
 	        } else {
 	            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

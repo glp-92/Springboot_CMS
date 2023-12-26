@@ -1,5 +1,7 @@
 package com.blog.blog.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.text.ParseException;
@@ -9,6 +11,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.blog.blog.data.UserRepository;
@@ -102,6 +108,38 @@ public class PostServiceImpl implements PostService {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public List<Post> getPostsFiltered(String categorieName, String keyword, int page, boolean reverse) {
+		List<Post> results = new ArrayList<>();
+		
+		if (categorieName != null) {
+			Categorie categorie = categorieRepo.findByName(categorieName);
+			if (keyword != null) {
+				for (String key : Arrays.asList(keyword.split(","))) {
+					results.addAll(postRepo.findByCategoriesContainingAndTitleContainingOrContentContainingIgnoreCase(categorie, key.trim(), key.trim()));
+				}
+			} else {
+				results.addAll(postRepo.findByCategoriesContaining(categorie));
+			}
+		} else if (keyword != null) {
+			for (String key : Arrays.asList(keyword.split(","))) {
+				results.addAll(postRepo.findByTitleContainingOrContentContainingIgnoreCase(key.trim(), key.trim()));	
+			}
+		} else {
+			results.addAll(postRepo.findAll());	
+		}
+		
+		Set<Long> postIds = new HashSet<>();
+	    for (Post post : results) {
+	        if (!postIds.contains(post.getId())) {
+	            postIds.add(post.getId());
+	        }
+	    }
+	    Sort.Direction direction = reverse ? Sort.Direction.ASC: Sort.Direction.DESC;
+		Pageable pageable = PageRequest.of(page, 1, Sort.by(direction, "date"));
+		return postRepo.findAllByIdIn(postIds, pageable).getContent();
 	}
 
 }
