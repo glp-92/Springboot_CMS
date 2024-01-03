@@ -6,5 +6,8 @@ import './index.css'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />
+    <footer>
+      <p>Pie de página</p>
+    </footer>
   </React.StrictMode>,
 )
