@@ -3,10 +3,12 @@ package com.blog.blog.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -138,8 +140,14 @@ public class PostServiceImpl implements PostService {
 	        }
 	    }
 	    Sort.Direction direction = reverse ? Sort.Direction.ASC: Sort.Direction.DESC;
-		Pageable pageable = PageRequest.of(page, 1, Sort.by(direction, "date"));
-		return postRepo.findAllByIdIn(postIds, pageable).getContent();
+		Pageable pageable = PageRequest.of(page, 5, Sort.by(direction, "date"));
+		Page<Post> pageResult = postRepo.findAllByIdIn(postIds, pageable);
+		/*int totalPages = pageResult.getTotalPages();
+		System.out.println(totalPages);
+		Map<String, Object> response = new HashMap<>();
+		response.put("totalPages", pageResult.getTotalPages());
+		response.put("content", pageResult.getContent());*/
+		return pageResult.getContent();
 	}
 
 }

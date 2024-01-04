@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Home from "../pages/Home";
-import Login from "../pages/Login";
-import Search from "../pages/Search";
-import Post from "../pages/Post";
+import Home from "../pages/home/Home";
+import Login from "../pages/login/Login";
+import Search from "../pages/search/Search";
+import Post from "../pages/post/Post";
 
 export const Router = () => {
     return (
