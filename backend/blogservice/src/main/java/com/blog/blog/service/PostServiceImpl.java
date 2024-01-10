@@ -150,4 +150,9 @@ public class PostServiceImpl implements PostService {
 		return pageResult.getContent();
 	}
 
+	@Override
+	public Post getPostByUri(String postSlug) {
+		return postRepo.findBySlug(postSlug);
+	}
+
 }

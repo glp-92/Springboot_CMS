@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.blog.blog.model.dto.FullPostDto;
 import com.blog.blog.model.pojo.Post;
 import com.blog.blog.model.request.CreatePost;
 import com.blog.blog.model.request.EditPost;
@@ -41,6 +42,24 @@ public class PostController {
 	        } else {
 	            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	        }
+		} catch (Exception e) {
+			//System.err.println("Error: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@GetMapping("/post/{postSlug}")
+	public ResponseEntity<FullPostDto> getPostByUri (
+			@PathVariable String postSlug
+			) {
+		try {
+			Post post = service.getPostByUri(postSlug);
+			if (post != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(new FullPostDto(post));
+			} 
+			else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			}
 		} catch (Exception e) {
 			//System.err.println("Error: " + e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -1,5 +1,6 @@
 import React from 'react'
-import reactLogo from '../../assets/react.svg'
+//import reactLogo from '../../assets/react.svg'
+
 
 const PostCard = (postInfo) => {
     return (
@@ -13,7 +14,7 @@ const PostCard = (postInfo) => {
                 </header>
                 <div>
                     <p>{postInfo["excerpt"]}</p>
-                    <a href = "/">Leer Mas</a>
+                    <a href = {`/post/${postInfo["slug"]}`}>Leer Mas</a>
                 </div>
                 <footer>
                     <p>{postInfo["users"]["name"]}</p>

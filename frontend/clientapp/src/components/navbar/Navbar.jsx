@@ -5,7 +5,7 @@ const NavBar = () => {
   return (
     <nav>
       <a href="/">Home</a>
-      <form>
+      <form onSubmit={(e) => e.preventDefault()}>
         <input type="text" placeholder="Search.."/>
         <button type="submit">Buscar</button>
       </form>

@@ -3,6 +3,7 @@ package com.blog.blog.model.pojo;
 import java.util.Date;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -53,6 +54,7 @@ public class Post {
 	private String excerpt;
 	
 	@Column
+	@JsonIgnore
 	@NotBlank(message = "field content cannot be empty!")
 	private String content;
 	
@@ -69,6 +71,7 @@ public class Post {
 	private Boolean featuredPost;
 	
 	@ManyToMany
+	@JsonIgnore
 	@JoinTable(
 	  name = "post_categorie", 
 	  joinColumns = @JoinColumn(name = "post_id"), 

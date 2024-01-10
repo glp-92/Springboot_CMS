@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 // import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,20 +23,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    // private final JwtAuthenticationFilter jwtAuthFilter;
+	private final UsrAuthenticationFilter usrAuthFilter;
     private final UserDetailsService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    	//http.cors(cors -> cors.disable());
     	http.csrf(csrf -> csrf.disable())
     	.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.authorizeHttpRequests((requests) -> requests
 			.requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
-			.anyRequest().denyAll());
-    	/*.authenticationProvider(authenticationProvider())
-    	.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);*/
+			.requestMatchers(HttpMethod.GET, "/valid").authenticated()
+			.anyRequest().denyAll())
+    	.authenticationProvider(authenticationProvider())
+    	.addFilterBefore(usrAuthFilter, UsernamePasswordAuthenticationFilter.class);
 	return http.build();
 	}
     

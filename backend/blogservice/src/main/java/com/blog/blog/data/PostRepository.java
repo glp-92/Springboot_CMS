@@ -14,4 +14,5 @@ public interface PostRepository extends JpaRepository<Post, Long>{
 	List<Post> findByTitleContainingOrContentContainingIgnoreCase(String keyTitle, String keyContent);
 	List<Post> findByCategoriesContainingAndTitleContainingOrContentContainingIgnoreCase(Categorie categorie, String keyTitle, String keyContent);
 	Page<Post> findAllByIdIn(Iterable<Long> postIds, Pageable pageable);
+	Post findBySlug(String postSlug);
 }
