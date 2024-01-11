@@ -16,7 +16,7 @@ public class CreatePost {
 	private String slug;
 	private String excerpt;
 	private String content;
-	private String date;
+	//private String date;
 	private String featuredImage;
 	private Boolean featuredPost;
 	private List<Long> categoryIds; // Lista de identificadores de categorías

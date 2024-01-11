@@ -37,7 +37,7 @@ const Post = () => {
           <article>
             <header>
               <h1>{postData["title"]}</h1>
-              <img src={postData["featuredImage"]} loading="lazy" width="30" height="30" />
+              <img src={`${postData["slug"]}/${postData["featuredImage"]}`} loading="lazy" width="120" height="120" />
             </header>
             <main>
               {postData["content"]}

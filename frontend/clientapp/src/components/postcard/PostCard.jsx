@@ -6,7 +6,7 @@ const PostCard = (postInfo) => {
     return (
         <article>
             <div>
-                <img src={postInfo["featuredImage"]} loading="lazy" width="30" height="30"/>
+                <img src={`post/${postInfo["slug"]}/${postInfo["featuredImage"]}`} loading="lazy" width="30" height="30"/>
             </div>
             <div>
                 <header>

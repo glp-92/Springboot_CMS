@@ -3,12 +3,10 @@ package com.blog.blog.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -45,12 +43,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public Post createPost(CreatePost request) {
 		User author = authorRepo.findById(request.getAuthorId()).orElse(null);
-		Date date = null;
-		try {
-		    date = dateFormatter.parse(request.getDate());
-		} catch (ParseException e) {
-			date = new Date(System.currentTimeMillis());
-		}
+		Date date = new Date(System.currentTimeMillis());
 		Set<Categorie> categories = new HashSet<Categorie>(categorieRepo.findAllById(request.getCategoryIds()));
 		Post post = Post.builder().title(request.getTitle()).slug(request.getSlug()).excerpt(request.getExcerpt()).content(request.getContent()).date(date).featuredImage(request.getFeaturedImage()).featuredPost(request.getFeaturedPost()).categories(categories).users(author).build();
 		return postRepo.save(post);

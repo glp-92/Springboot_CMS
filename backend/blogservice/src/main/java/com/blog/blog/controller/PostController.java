@@ -74,7 +74,7 @@ public class PostController {
 			Post post = service.createPost(request);
 			return ResponseEntity.status(HttpStatus.CREATED).body(post);
 		} catch (Exception e) {
-			//System.err.println("Error: " + e.getMessage());
+			System.err.println("Error: " + e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
