@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.blog.blog.model.dto.FullPostDto;
 import com.blog.blog.model.pojo.Post;
@@ -93,6 +94,22 @@ public class PostController {
 			}
 		} catch (Exception e) {
 			//System.err.println("Error: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@PostMapping("/post/{postId}/image-upload")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<List<String>> storeImages (
+			@PathVariable String postId,
+			@RequestParam("imageList") List<MultipartFile> imageList,
+			@RequestParam("imagenameList") List<String> imagenameList
+		) {
+		try {
+			List<String> paths = service.uploadImages(imageList, imagenameList);
+			return ResponseEntity.status(HttpStatus.OK).body(paths);
+		} catch (Exception e) {
+			// System.err.println("Error: " + e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}

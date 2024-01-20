@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -11,11 +13,13 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.blog.blog.data.UserRepository;
 import com.blog.blog.data.CategorieRepository;
@@ -39,6 +43,9 @@ public class PostServiceImpl implements PostService {
 	private UserRepository authorRepo;
 	
 	SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+	
+	@Value("${storage-path}")
+    private String storagePath;
     
 	@Override
 	public Post createPost(CreatePost request) {
@@ -146,6 +153,22 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public Post getPostByUri(String postSlug) {
 		return postRepo.findBySlug(postSlug);
+	}
+
+	@Override
+	public List<String> uploadImages(List<MultipartFile> imageList, List<String> imagenameList) throws IllegalStateException, IOException {
+		if (imageList == null || imagenameList == null || imageList.size() != imagenameList.size()) {
+		    throw new IllegalStateException("Las listas de imágenes y nombres deben tener la misma longitud y no vacias");
+		}
+		List<String> imageFullPathList = new ArrayList<>();
+	    for (int i = 0; i < imageList.size(); i++) {
+	        MultipartFile image = imageList.get(i);
+	        String imageStoragePath = storagePath + imagenameList.get(i);
+	        File file = new File(imageStoragePath);
+	        image.transferTo(file);
+	        imageFullPathList.add(imageStoragePath);
+	    }
+		return imageFullPathList;
 	}
 
 }

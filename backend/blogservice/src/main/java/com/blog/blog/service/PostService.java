@@ -1,6 +1,9 @@
 package com.blog.blog.service;
 
+import java.io.IOException;
 import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.blog.blog.model.pojo.Post;
 import com.blog.blog.model.request.CreatePost;
@@ -13,5 +16,6 @@ public interface PostService {
 	boolean deletePost(String postId);
 	List<Post> getPostsFiltered(String categorieName, String keyword, int page, boolean reverse);
 	Post getPostByUri(String postSlug);
+	List<String> uploadImages(List<MultipartFile> imageList, List<String> imagenameList) throws IllegalStateException, IOException;
 	// Post getPostByCategorie(String categorieId);*/
 }
