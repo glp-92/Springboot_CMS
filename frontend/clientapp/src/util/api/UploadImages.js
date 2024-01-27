@@ -1,7 +1,7 @@
 export const uploadImages = async (token, slug, featuredImage) => {
     const formData = new FormData();
     formData.append('imageList', featuredImage, 'featuredImage');
-    formData.append('imagenameList', slug);
+    formData.append('imagenameList', slug + "/mainImage.webp");
 
     try {
         const response = await fetch(`http://localhost:8080/blog/post/${slug}/image-upload`, {

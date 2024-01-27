@@ -164,6 +164,10 @@ public class PostServiceImpl implements PostService {
 	    for (int i = 0; i < imageList.size(); i++) {
 	        MultipartFile image = imageList.get(i);
 	        String imageStoragePath = storagePath + imagenameList.get(i);
+	        File directory = new File(imageStoragePath).getParentFile();;
+	        if (!directory.exists()) {
+	            directory.mkdirs();  // También puedes usar mkdir() si solo necesitas crear un directorio
+	        }
 	        File file = new File(imageStoragePath);
 	        image.transferTo(file);
 	        imageFullPathList.add(imageStoragePath);
