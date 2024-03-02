@@ -7,8 +7,9 @@ const Writer = () => {
   const [slug, setSlug] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [content, setContent] = useState('');
-  const [contentPosition, setContentPosition] = useState(0);
+  const [contentPosition, setContentPosition] = useState(null);
   const [featuredImage, setFeaturedImage] = useState('');
+  const [imageMappings, setImageMappings] = useState({});
 
   const readImage = async (imageFile, isMainImage) => {
     if (imageFile && isMainImage) {
@@ -20,7 +21,11 @@ const Writer = () => {
     const imgMdCode = `\n\n![${imageName.substring(0, dotIndex)}](${imageName})\n\n`;
     const newContent = content.substring(0, contentPosition) + imgMdCode + content.substring(contentPosition)
     setContent(newContent);
-  }  
+    setImageMappings(prevImageMapping => ({
+      ...prevImageMapping,
+      [imageName]: imageFile
+    }));
+  }
 
   const handleSendPost = async (e) => {
     e.preventDefault();
@@ -41,7 +46,15 @@ const Writer = () => {
         }
       );
       if (response.ok) {
-        response = await uploadImages(token, slug, featuredImage)
+        const images = [featuredImage];
+        const imageNames = [`mainImage.webp`];
+        const imageMDRegex = /!\[.*?\]\((.*?)\)/g;
+        let match;
+        while ((match = imageMDRegex.exec(content)) !== null) {
+          images.push(imageMappings[match[1]]);
+          imageNames.push(match[1]);
+        }
+        response = await uploadImages(token, slug, images, imageNames);
         console.log("Subida efectiva de POST")
       }
       else {
@@ -61,7 +74,7 @@ const Writer = () => {
         <div className="editor-toolbar">
           <label>
             <img src="imgIcon.svg" width="30" height="30" />
-            <input id="image-input" type="file" accept="image/png, image/jpeg, image/webp" placeholder="Imagen" onChange={(e) => { readImage(e.target.files[0], false) }} style={{ "display": "none" }} />
+            <input id="image-input" type="file" accept="image/png, image/jpeg, image/webp" placeholder="Imagen" disabled={contentPosition === null} onChange={(e) => { readImage(e.target.files[0], false) }} style={{ "display": "none" }} />
           </label>
         </div>
         <textarea className="editor"

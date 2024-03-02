@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import Markdown from 'markdown-to-jsx'
 import { Navigate } from "react-router-dom";
 import './Post.css'
 
 const Post = () => {
   const slug = window.location.pathname.replace(`/post/`, "");
   const [postData, setPostData] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)  
 
   const getPostData = async () => {
     try {
@@ -40,7 +41,7 @@ const Post = () => {
               <img src={`${postData["slug"]}/${postData["featuredImage"]}`} loading="lazy" width="120" height="120" />
             </header>
             <main>
-              {postData["content"]}
+              <Markdown>{postData["content"]}</Markdown>
             </main>
             <footer>
               <p>{postData["date"]}</p>
