@@ -7,22 +7,22 @@ const Writer = () => {
   const [slug, setSlug] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [content, setContent] = useState('');
-  const [contentPosition, setContentPosition] = useState(null);
+  const [contentPosition, setContentPosition] = useState(null); // Content position se utiliza para traquear la posicion para insertar imagenes o cualquier otra cosa desde el editor rapido
   const [featuredImage, setFeaturedImage] = useState('');
-  const [imageMappings, setImageMappings] = useState({});
+  const [imageMappings, setImageMappings] = useState({}); // Actualmente, las imagenes solo se insertan a traves del icono destinado para ello
 
-  const readImage = async (imageFile, isMainImage) => {
+  const readImage = async (imageFile, isMainImage) => { // Se lee imagen, si es la principal se renderizara, si es del content se añadira a un mapping de imagenes clave - imagen
     if (imageFile && isMainImage) {
-      setFeaturedImage(imageFile);
+      setFeaturedImage(imageFile); // Mostrara la imagen de portada, esta imagen es fundamental y requerida por cada post
       return;
     }
     const imageName = imageFile.name;
     const dotIndex = imageName.lastIndexOf('.');
-    const imgMdCode = `\n\n![${imageName.substring(0, dotIndex)}](${imageName})\n\n`;
+    const imgMdCode = `\n\n![${imageName.substring(0, dotIndex)}](${imageName})\n\n`; // Inserta la imagen en el content con 2 saltos de linea y el codigo markdown correspondiente
     const newContent = content.substring(0, contentPosition) + imgMdCode + content.substring(contentPosition)
     setContent(newContent);
     setImageMappings(prevImageMapping => ({
-      ...prevImageMapping,
+      ...prevImageMapping, // Añade al clave valor anterior un nuevo clave valor al añadir una imagen
       [imageName]: imageFile
     }));
   }
@@ -41,17 +41,17 @@ const Writer = () => {
           "featuredImage": 'mainImage.webp',
           "date": null,
           "featuredPost": false,
-          "categoryIds": [1],
-          "authorId": 1
+          "categoryIds": [1], // Esto debe cambiarse
+          "authorId": 1 // Esto deberia sacarse del jwt
         }
       );
-      if (response.ok) {
+      if (response.ok) { // Si el post se sube correctamente, envia las imagenes a la API para el almacenamiento local
         const images = [featuredImage];
         const imageNames = [`mainImage.webp`];
-        const imageMDRegex = /!\[.*?\]\((.*?)\)/g;
+        const imageMDRegex = /!\[.*?\]\((.*?)\)/g; // Regex de patron de imagenes en markdown
         let match;
         while ((match = imageMDRegex.exec(content)) !== null) {
-          images.push(imageMappings[match[1]]);
+          images.push(imageMappings[match[1]]); // match[1], nombre de imagen
           imageNames.push(match[1]);
         }
         response = await uploadImages(token, slug, images, imageNames);

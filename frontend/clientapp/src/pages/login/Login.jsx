@@ -1,19 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './Login.css'
 import { Navigate } from 'react-router-dom';
+import { ValidateToken } from '../../hooks/ValidateToken';
 
 const Login = () => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true); Al ser utilizado de forma propia, en principio no se mostrara pantalla de carga
   const [logged, setLogged] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = (e) => { // Envia el formulario de login, carga el token en almacenamiento
     e.preventDefault(); // Previene el comportamiento por defecto, en caso de un form, refrescar la pagina
     const login = async () => {
       try {
-        setIsLoading(true);
+        // setIsLoading(true);
         const response = await fetch(`http://localhost:8080/auth/login`, {
           method: "POST",
           headers: {
@@ -33,11 +34,14 @@ const Login = () => {
       } catch (error) {
         console.log(error)
       }
-      setIsLoading(false);
+      // setIsLoading(false);
     };
     login();
   };
 
+  useEffect(() => { // Se verifica si se esta logueado actualmente y se redirige al panel de administracion
+    setLogged(ValidateToken());
+  }, [])
 
   return (
     <div className="login-wrapper">

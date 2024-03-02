@@ -5,8 +5,9 @@ import PostList from '../../components/postlist/PostList'
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const getPosts = async (page) => {
+  const [page, setPage] = useState(0); // Paginacion **PENDIENTE**
+
+  const getPosts = async (page) => { // Obtiene el listado de posts
     try {
       setIsLoading(true);
       const response = await fetch(`http://localhost:8080/blog/post?page=${page}`);
@@ -21,7 +22,7 @@ const Home = () => {
     setIsLoading(false);
   };
 
-  useEffect(() => {
+  useEffect(() => { // Al llegar a home
     getPosts(page);
   }, [page])
 
