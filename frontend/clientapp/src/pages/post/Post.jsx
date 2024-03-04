@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Markdown from 'markdown-to-jsx'
+import FullPost from '../../components/fullPost/FullPost'
 import { Navigate } from "react-router-dom";
 import './Post.css'
 
@@ -7,12 +7,6 @@ const Post = () => {
   const slug = window.location.pathname.replace(`/post/`, ""); // Se elimina el /post para la constante slug ya que en BBDD se introduce el slug tal cual
   const [postData, setPostData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-
-  const overrideContentImagePath = (props) => { // Funcion que provee la libreria markdown-to-jsx para sobreescribir la ruta de imagen que debe tener el directorio /post/slug/... y por defecto solo trae el nombre de la BBDD
-    const overridesrc = `${postData["slug"]}/${props.src}`;
-    const overrideProps = { ...props, src: overridesrc, loading: "lazy" };
-    return <img {...overrideProps} />;
-  }
 
   const getPostData = async () => {
     try {
@@ -42,25 +36,7 @@ const Post = () => {
         </div>
       ) : (
         postData ? (
-          <article>
-            <header>
-              <h1>{postData["title"]}</h1>
-              <img src={`${postData["slug"]}/${postData["featuredImage"]}`} loading="lazy" width="120" height="120" />
-            </header>
-            <main>
-              <Markdown options={{
-                overrides: {
-                  img: overrideContentImagePath
-                }
-              }}>
-                {postData["content"]}
-              </Markdown>
-            </main>
-            <footer>
-              <p>{postData["date"]}</p>
-              <p>{postData["users"]["name"]}</p>
-            </footer>
-          </article>
+          <FullPost postData={postData} />
         ) : (
           <Navigate to="/not-found" replace={true} />
         )

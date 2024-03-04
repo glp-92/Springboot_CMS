@@ -71,7 +71,7 @@ public class Post {
 	private Boolean featuredPost;
 	
 	@ManyToMany
-	@JsonIgnore
+	//@JsonIgnore
 	@JoinTable(
 	  name = "post_categorie", 
 	  joinColumns = @JoinColumn(name = "post_id"), 

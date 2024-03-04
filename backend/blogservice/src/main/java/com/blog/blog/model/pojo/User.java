@@ -42,6 +42,7 @@ public class User implements UserDetails {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	@JsonIgnore
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
@@ -69,6 +70,7 @@ public class User implements UserDetails {
     private Set<Post> posts;
 	
 	@Column
+	@JsonIgnore
 	@Enumerated(EnumType.STRING)
     private Role role;
 
