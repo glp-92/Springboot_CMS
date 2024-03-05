@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import FullPost from '../../components/fullPost/FullPost'
+import PostContent from '../../components/postContent/PostContent'
 import { Navigate } from "react-router-dom";
 import './Post.css'
 
@@ -36,7 +36,7 @@ const Post = () => {
         </div>
       ) : (
         postData ? (
-          <FullPost postData={postData} />
+          <PostContent postData={postData} />
         ) : (
           <Navigate to="/not-found" replace={true} />
         )

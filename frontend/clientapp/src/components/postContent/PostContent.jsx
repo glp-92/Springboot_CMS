@@ -1,7 +1,7 @@
 import React from 'react'
 import Markdown from 'markdown-to-jsx'
 
-const FullPost = ({ postData }) => {
+const PostContent = ({ postData }) => {
 
     const overrideContentImagePath = (props) => { // Funcion que provee la libreria markdown-to-jsx para sobreescribir la ruta de imagen que debe tener el directorio /post/slug/... y por defecto solo trae el nombre de la BBDD
         const overridesrc = `${postData["slug"]}/${props.src}`;
@@ -35,4 +35,4 @@ const FullPost = ({ postData }) => {
     )
 }
 
-export default FullPost
+export default PostContent

@@ -40,7 +40,11 @@ const Login = () => {
   };
 
   useEffect(() => { // Se verifica si se esta logueado actualmente y se redirige al panel de administracion
-    setLogged(ValidateToken());
+    const fetchTokenValid = async () => {
+      const isValid = await ValidateToken();
+      setLogged(isValid);
+    }
+    fetchTokenValid();
   }, [])
 
   return (

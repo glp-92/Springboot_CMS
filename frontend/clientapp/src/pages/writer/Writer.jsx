@@ -7,6 +7,8 @@ const Writer = () => {
   const [slug, setSlug] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [content, setContent] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [selectedCategorie, setSelectedCategorie] = useState(null);
   const [contentPosition, setContentPosition] = useState(null); // Content position se utiliza para traquear la posicion para insertar imagenes o cualquier otra cosa desde el editor rapido
   const [featuredImage, setFeaturedImage] = useState('');
   const [imageMappings, setImageMappings] = useState({}); // Actualmente, las imagenes solo se insertan a traves del icono destinado para ello
@@ -27,6 +29,20 @@ const Writer = () => {
     }));
   }
 
+  const getCategories = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/blog/categorie`);
+      if (!response.ok) {
+        throw new Error(`Error al obtener categorias: ${response.statusText}`);
+      }
+      const data = await response.json();
+      setCategories(data);
+      setSelectedCategorie(data[0].id);
+    } catch (error) {
+      setCategories([]);
+    }
+  };
+
   const handleSendPost = async (e) => {
     e.preventDefault();
     try {
@@ -41,7 +57,7 @@ const Writer = () => {
           "featuredImage": 'mainImage.webp',
           "date": null,
           "featuredPost": false,
-          "categoryIds": [1], // Esto debe cambiarse
+          "categoryIds": [selectedCategorie], // Esto debe cambiarse
           "authorId": 1 // Esto deberia sacarse del jwt
         }
       );
@@ -65,6 +81,10 @@ const Writer = () => {
     }
   }
 
+  useEffect(() => { // Se verifica si se esta logueado actualmente y se redirige al panel de administracion
+    getCategories();
+  }, [])
+
   return (
     <form onSubmit={handleSendPost}>
       <input type="text" placeholder="Titulo" value={title} onChange={(e) => { setTitle(e.target.value) }}></input>
@@ -86,6 +106,16 @@ const Writer = () => {
       </div>
       <input type="file" accept="image/png, image/jpeg, image/webp" placeholder="Imagen" onChange={(e) => { readImage(e.target.files[0], true) }} />
       {featuredImage && <img src={URL.createObjectURL(featuredImage)} />}
+      <div>
+        <p>Categoria</p>
+        <select onChange={(e) => { setSelectedCategorie(e.target.value) }}>
+          {categories.map(categorie => (
+            <option key={categorie.id} value={categorie.id}>
+              {categorie.name}
+            </option>
+          ))}
+        </select>
+      </div>
       <button type="submit">Enviar</button>
     </form>
   )

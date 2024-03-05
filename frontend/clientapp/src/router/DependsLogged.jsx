@@ -9,9 +9,13 @@ const DependsLogged = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        setIsLoading(true);
-        setTokenValid(ValidateToken());
-        setIsLoading(false);
+        const fetchTokenValid = async () => {
+            setIsLoading(true);
+            const isValid = await ValidateToken();
+            setTokenValid(isValid);
+            setIsLoading(false);
+        }
+        fetchTokenValid();
     }, []);
 
     return (
