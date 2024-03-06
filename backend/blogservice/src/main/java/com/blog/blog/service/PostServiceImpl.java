@@ -3,12 +3,14 @@ package com.blog.blog.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -113,26 +115,19 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<Post> getPostsFiltered(String categorieName, String keyword, int page, boolean reverse) {
+	public Map<String, Object> getPostsFiltered(String keyword, int page, boolean reverse) {
 		List<Post> results = new ArrayList<>();
-		
-		if (categorieName != null) {
-			Categorie categorie = categorieRepo.findByName(categorieName);
-			if (keyword != null) {
-				for (String key : Arrays.asList(keyword.split(","))) {
-					results.addAll(postRepo.findByCategoriesContainingAndTitleContainingOrContentContainingIgnoreCase(categorie, key.trim(), key.trim()));
-				}
-			} else {
-				results.addAll(postRepo.findByCategoriesContaining(categorie));
-			}
-		} else if (keyword != null) {
+		if (keyword != null) {
+			Categorie categorie = categorieRepo.findByName(keyword);
 			for (String key : Arrays.asList(keyword.split(","))) {
+				results.addAll(postRepo.findByCategoriesContainingAndTitleContainingOrContentContainingIgnoreCase(categorie, key.trim(), key.trim()));
 				results.addAll(postRepo.findByTitleContainingOrContentContainingIgnoreCase(key.trim(), key.trim()));	
 			}
-		} else {
+			results.addAll(postRepo.findByCategoriesContaining(categorie));
+		}
+		else {
 			results.addAll(postRepo.findAll());	
 		}
-		
 		Set<Long> postIds = new HashSet<>();
 	    for (Post post : results) {
 	        if (!postIds.contains(post.getId())) {
@@ -142,12 +137,11 @@ public class PostServiceImpl implements PostService {
 	    Sort.Direction direction = reverse ? Sort.Direction.ASC: Sort.Direction.DESC;
 		Pageable pageable = PageRequest.of(page, 5, Sort.by(direction, "date"));
 		Page<Post> pageResult = postRepo.findAllByIdIn(postIds, pageable);
-		/*int totalPages = pageResult.getTotalPages();
-		System.out.println(totalPages);
+		int totalPages = pageResult.getTotalPages();
 		Map<String, Object> response = new HashMap<>();
-		response.put("totalPages", pageResult.getTotalPages());
-		response.put("content", pageResult.getContent());*/
-		return pageResult.getContent();
+	    response.put("totalPages", totalPages);
+	    response.put("content", pageResult.getContent());
+	    return response;
 	}
 
 	@Override

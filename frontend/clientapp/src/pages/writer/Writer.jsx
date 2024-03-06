@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { uploadPost } from './../../util/api/UploadPost'
 import { uploadImages } from './../../util/api/UploadImages'
 
 const Writer = () => {
+  const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [excerpt, setExcerpt] = useState('');
@@ -71,7 +73,8 @@ const Writer = () => {
           imageNames.push(match[1]);
         }
         response = await uploadImages(token, slug, images, imageNames);
-        console.log("Subida efectiva de POST")
+        // console.log("Subida efectiva de POST")
+        navigate(`/post/${slug}`);
       }
       else {
         console.log("Error en subida de post: ", response)

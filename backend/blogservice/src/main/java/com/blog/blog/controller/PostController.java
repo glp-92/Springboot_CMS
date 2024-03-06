@@ -1,6 +1,7 @@
 package com.blog.blog.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,14 +31,13 @@ public class PostController {
 	private final PostService service;
 	
 	@GetMapping("/post")
-	public ResponseEntity<List<Post>> getFilteredPosts (
-			@RequestParam(name = "categorie", required = false) String categorie,
+	public ResponseEntity<Map<String, Object>> getFilteredPosts (
 			@RequestParam(name = "keyword", required = false) String keyword,
 			@RequestParam(name = "page", required = true) int page,
 			@RequestParam(name = "reverse", required = false) boolean reverse
 			) {
 		try {
-			List<Post> posts = service.getPostsFiltered(categorie, keyword, page, reverse);
+			Map<String, Object> posts = service.getPostsFiltered(keyword, page, reverse);
 			if (!posts.isEmpty()) {
 	            return ResponseEntity.status(HttpStatus.OK).body(posts);
 	        } else {
