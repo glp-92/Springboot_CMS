@@ -37,6 +37,11 @@ public class PostController {
 			@RequestParam(name = "reverse", required = false) boolean reverse
 			) {
 		try {
+			if (keyword != null) {
+				if (keyword.length() > 20 || !keyword.matches("[a-zA-Z0-9]+")) {
+		            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		        }
+			}
 			Map<String, Object> posts = service.getPostsFiltered(keyword, page, reverse);
 			if (!posts.isEmpty()) {
 	            return ResponseEntity.status(HttpStatus.OK).body(posts);

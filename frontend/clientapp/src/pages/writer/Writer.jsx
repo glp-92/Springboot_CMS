@@ -14,6 +14,7 @@ const Writer = () => {
   const [contentPosition, setContentPosition] = useState(null); // Content position se utiliza para traquear la posicion para insertar imagenes o cualquier otra cosa desde el editor rapido
   const [featuredImage, setFeaturedImage] = useState('');
   const [imageMappings, setImageMappings] = useState({}); // Actualmente, las imagenes solo se insertan a traves del icono destinado para ello
+  const [errorOnSend, setErrorOnSend] = useState(false);
 
   const readImage = async (imageFile, isMainImage) => { // Se lee imagen, si es la principal se renderizara, si es del content se añadira a un mapping de imagenes clave - imagen
     if (imageFile && isMainImage) {
@@ -47,6 +48,15 @@ const Writer = () => {
 
   const handleSendPost = async (e) => {
     e.preventDefault();
+
+    setErrorOnSend(true);
+    if (title.length === 0) return 
+    if (slug.length === 0) return 
+    if (excerpt.length === 0) return 
+    if (content.length === 0) return 
+    if (categories.length === 0) return 
+    if (featuredImage.length === 0) return 
+
     try {
       const token = localStorage.getItem("jwt");
       let response = await uploadPost(
@@ -73,6 +83,7 @@ const Writer = () => {
           imageNames.push(match[1]);
         }
         response = await uploadImages(token, slug, images, imageNames);
+        setErrorOnSend(false);
         // console.log("Subida efectiva de POST")
         navigate(`/post/${slug}`);
       }
@@ -91,8 +102,11 @@ const Writer = () => {
   return (
     <form onSubmit={handleSendPost}>
       <input type="text" placeholder="Titulo" value={title} onChange={(e) => { setTitle(e.target.value) }}></input>
+      {errorOnSend && title.length === 0 && <p className="inputPostError">Titulo vacio</p>}
       <input type="text" placeholder="Slug" value={slug} onChange={(e) => { setSlug(e.target.value) }}></input>
+      {errorOnSend && slug.length === 0 && <p className="inputPostError">Slug vacio</p>}
       <input type="text" placeholder="Resumen" value={excerpt} onChange={(e) => { setExcerpt(e.target.value) }}></input>
+      {errorOnSend && excerpt.length === 0 && <p className="inputPostError">Resumen vacio</p>}
       <div className="editor-wrapper">
         <div className="editor-toolbar">
           <label>
@@ -106,9 +120,11 @@ const Writer = () => {
           onClick={(e) => { setContentPosition(e.target.selectionStart) }}
           onChange={(e) => { setContent(e.target.value); setContentPosition(e.target.selectionStart) }}
         />
+        {errorOnSend && content.length === 0 && <p className="inputPostError">Contenido vacio</p>}
       </div>
       <input type="file" accept="image/png, image/jpeg, image/webp" placeholder="Imagen" onChange={(e) => { readImage(e.target.files[0], true) }} />
       {featuredImage && <img src={URL.createObjectURL(featuredImage)} />}
+      {errorOnSend && featuredImage.length === 0 && <p className="inputPostError">No se ha seleccionado imagen de portada</p>}
       <div>
         <p>Categoria</p>
         <select onChange={(e) => { setSelectedCategorie(e.target.value) }}>
@@ -119,6 +135,7 @@ const Writer = () => {
           ))}
         </select>
       </div>
+      {errorOnSend && categories.length === 0 && <p className="inputPostError">No se ha seleccionado categoria</p>}
       <button type="submit">Enviar</button>
     </form>
   )
