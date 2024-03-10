@@ -50,12 +50,12 @@ const Writer = () => {
     e.preventDefault();
 
     setErrorOnSend(true);
-    if (title.length === 0) return 
-    if (slug.length === 0) return 
-    if (excerpt.length === 0) return 
-    if (content.length === 0) return 
-    if (categories.length === 0) return 
-    if (featuredImage.length === 0) return 
+    if (title.length === 0) return
+    if (slug.length === 0) return
+    if (excerpt.length === 0) return
+    if (content.length === 0) return
+    if (categories.length === 0) return
+    if (featuredImage.length === 0) return
 
     try {
       const token = localStorage.getItem("jwt");
@@ -100,44 +100,47 @@ const Writer = () => {
   }, [])
 
   return (
-    <form onSubmit={handleSendPost}>
-      <input type="text" placeholder="Titulo" value={title} onChange={(e) => { setTitle(e.target.value) }}></input>
-      {errorOnSend && title.length === 0 && <p className="inputPostError">Titulo vacio</p>}
-      <input type="text" placeholder="Slug" value={slug} onChange={(e) => { setSlug(e.target.value) }}></input>
-      {errorOnSend && slug.length === 0 && <p className="inputPostError">Slug vacio</p>}
-      <input type="text" placeholder="Resumen" value={excerpt} onChange={(e) => { setExcerpt(e.target.value) }}></input>
-      {errorOnSend && excerpt.length === 0 && <p className="inputPostError">Resumen vacio</p>}
-      <div className="editor-wrapper">
-        <div className="editor-toolbar">
-          <label>
-            <img src="imgIcon.svg" width="30" height="30" />
-            <input id="image-input" type="file" accept="image/png, image/jpeg, image/webp" placeholder="Imagen" disabled={contentPosition === null} onChange={(e) => { readImage(e.target.files[0], false) }} style={{ "display": "none" }} />
-          </label>
+    <div>
+      <a href="/wpannel">Volver a Panel</a>
+      <form onSubmit={handleSendPost}>
+        <input type="text" placeholder="Titulo" value={title} onChange={(e) => { setTitle(e.target.value) }}></input>
+        {errorOnSend && title.length === 0 && <p className="inputPostError">Titulo vacio</p>}
+        <input type="text" placeholder="Slug" value={slug} onChange={(e) => { setSlug(e.target.value) }}></input>
+        {errorOnSend && slug.length === 0 && <p className="inputPostError">Slug vacio</p>}
+        <input type="text" placeholder="Resumen" value={excerpt} onChange={(e) => { setExcerpt(e.target.value) }}></input>
+        {errorOnSend && excerpt.length === 0 && <p className="inputPostError">Resumen vacio</p>}
+        <div className="editor-wrapper">
+          <div className="editor-toolbar">
+            <label>
+              <img src="imgIcon.svg" width="30" height="30" />
+              <input id="image-input" type="file" accept="image/png, image/jpeg, image/webp" placeholder="Imagen" disabled={contentPosition === null} onChange={(e) => { readImage(e.target.files[0], false) }} style={{ "display": "none" }} />
+            </label>
+          </div>
+          <textarea className="editor"
+            placeholder="Contenido"
+            value={content}
+            onClick={(e) => { setContentPosition(e.target.selectionStart) }}
+            onChange={(e) => { setContent(e.target.value); setContentPosition(e.target.selectionStart) }}
+          />
+          {errorOnSend && content.length === 0 && <p className="inputPostError">Contenido vacio</p>}
         </div>
-        <textarea className="editor"
-          placeholder="Contenido"
-          value={content}
-          onClick={(e) => { setContentPosition(e.target.selectionStart) }}
-          onChange={(e) => { setContent(e.target.value); setContentPosition(e.target.selectionStart) }}
-        />
-        {errorOnSend && content.length === 0 && <p className="inputPostError">Contenido vacio</p>}
-      </div>
-      <input type="file" accept="image/png, image/jpeg, image/webp" placeholder="Imagen" onChange={(e) => { readImage(e.target.files[0], true) }} />
-      {featuredImage && <img src={URL.createObjectURL(featuredImage)} />}
-      {errorOnSend && featuredImage.length === 0 && <p className="inputPostError">No se ha seleccionado imagen de portada</p>}
-      <div>
-        <p>Categoria</p>
-        <select onChange={(e) => { setSelectedCategorie(e.target.value) }}>
-          {categories.map(categorie => (
-            <option key={categorie.id} value={categorie.id}>
-              {categorie.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      {errorOnSend && categories.length === 0 && <p className="inputPostError">No se ha seleccionado categoria</p>}
-      <button type="submit">Enviar</button>
-    </form>
+        <input type="file" accept="image/png, image/jpeg, image/webp" placeholder="Imagen" onChange={(e) => { readImage(e.target.files[0], true) }} />
+        {featuredImage && <img src={URL.createObjectURL(featuredImage)} />}
+        {errorOnSend && featuredImage.length === 0 && <p className="inputPostError">No se ha seleccionado imagen de portada</p>}
+        <div>
+          <p>Categoria</p>
+          <select onChange={(e) => { setSelectedCategorie(e.target.value) }}>
+            {categories.map(categorie => (
+              <option key={categorie.id} value={categorie.id}>
+                {categorie.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        {errorOnSend && categories.length === 0 && <p className="inputPostError">No se ha seleccionado categoria</p>}
+        <button type="submit">Enviar</button>
+      </form>
+    </div>
   )
 }
 

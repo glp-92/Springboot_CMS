@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EditCategorie {
-	private String categorieId;
+	private String id;
 	private String name;
 	private String slug;
 }

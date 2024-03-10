@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import PostList from '../../components/postlist/PostList'
 import Pagination from '@mui/material/Pagination';
 import { GetPostList } from '../../hooks/GetPostList';
+import Loading from '../../components/loading/Loading';
 
 const Search = () => {
   let queryparams = window.location.search.replace('?', '&');
@@ -35,9 +36,7 @@ const Search = () => {
       <h1>Resultados de búsqueda</h1>
       <main>
         {isLoading ? (
-          <div>
-            <h2>Cargando...</h2>
-          </div>
+          <Loading />
         ) : (
           posts.length ? (
             <PostList postArr={posts} />

@@ -7,6 +7,7 @@ import Search from "../pages/search/Search";
 import Post from "../pages/post/Post";
 import NotFound from "../pages/notfound/NotFound";
 import Writer from "../pages/writer/Writer";
+import AdminPannel from "../pages/adminPannel/AdminPannel";
 
 import DependsLogged from "./DependsLogged";
 
@@ -20,7 +21,10 @@ export const Router = () => {
                 <Route path="/post/:postSlug" element={<Post />} />
                 <Route exact path="/notfound" element={<NotFound />} />
                 <Route element={<DependsLogged />}>
-                    <Route path="/wpannel" element={<Writer />} />
+                    <Route exact path="/wpannel" element={<AdminPannel />} />
+                </Route>
+                <Route element={<DependsLogged />}>
+                    <Route path="/wpannel/writer" element={<Writer />} />
                 </Route>
                 <Route path="*" element={<Navigate to="/notfound" />} />
             </Routes>

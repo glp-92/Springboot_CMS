@@ -3,6 +3,7 @@ import './Home.css'
 import PostList from '../../components/postlist/PostList'
 import Pagination from '@mui/material/Pagination';
 import { GetPostList } from '../../hooks/GetPostList';
+import Loading from '../../components/loading/Loading';
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -37,9 +38,7 @@ const Home = () => {
       <h1>Últimas entradas</h1>
       <main>
         {isLoading ? (
-          <div>
-            <h2>Cargando...</h2>
-          </div>
+          <Loading />
         ) : (
           posts.length ? (
             <PostList postArr={posts} />

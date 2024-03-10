@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PostContent from '../../components/postContent/PostContent'
 import { Navigate } from "react-router-dom";
+import Loading from '../../components/loading/Loading';
 import './Post.css'
 
 const Post = () => {
@@ -31,9 +32,7 @@ const Post = () => {
   return (
     <div>
       {isLoading ? (
-        <div>
-          <h1>Cargando...</h1>
-        </div>
+        <Loading/>
       ) : (
         postData ? (
           <PostContent postData={postData} />

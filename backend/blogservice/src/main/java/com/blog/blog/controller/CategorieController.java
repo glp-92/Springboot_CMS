@@ -69,6 +69,7 @@ public class CategorieController {
 	public ResponseEntity<Categorie> editCategorie (
 			@RequestBody EditCategorie request) {
 		try {
+			System.out.println(request.getId());
 			Categorie categorie = service.editCategorie(request);
 			if (categorie != null) {
 				return ResponseEntity.status(HttpStatus.OK).body(categorie);

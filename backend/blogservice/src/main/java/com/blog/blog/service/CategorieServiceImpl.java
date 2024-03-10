@@ -39,8 +39,8 @@ public class CategorieServiceImpl implements CategorieService {
 
 	@Override
 	public Categorie editCategorie(EditCategorie request) {
-		if (request.getCategorieId() != null) {
-			Optional<Categorie> categorie_opt = repository.findById(Long.valueOf(request.getCategorieId()));
+		if (request.getId() != null) {
+			Optional<Categorie> categorie_opt = repository.findById(Long.valueOf(request.getId()));
 			if (categorie_opt.isEmpty()) {
 	            return null;
 	        }
