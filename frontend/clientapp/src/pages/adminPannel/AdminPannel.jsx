@@ -11,8 +11,8 @@ const AdminPannel = () => {
     const [page, setPage] = useState(0);
     const [npages, setNPages] = useState(0);
 
-    const editPost = (id) => {
-        console.log(id);
+    const editPost = (post) => {
+        console.log(post);
     }
 
     const handleDeletePost = (id) => {
@@ -177,7 +177,7 @@ const AdminPannel = () => {
                 <ul>
                     {categories.map((categorie, index) => (
                         <li key={index}>
-                            <p contenteditable="true" onBlur={e => {
+                            <p suppressContentEditableWarning={true} contentEditable="true" onBlur={e => {
                                 handleEditCategorie(e.currentTarget.textContent, index);
                             }}>{categorie["name"]}</p>
                             <button onClick={() => handleDeleteCategorie(categorie["id"], index)}>Eliminar</button>
@@ -191,7 +191,7 @@ const AdminPannel = () => {
                 {posts.map(item => (
                     <div key={item["id"]}>
                         <p>{item["title"]}</p>
-                        <button onClick={() => editPost(item["id"])}>Editar</button>
+                        <button onClick={() => editPost(item)}>Editar</button>
                         <button onClick={() => handleDeletePost(item["id"])}>Eliminar</button>
                     </div>
                 ))}
