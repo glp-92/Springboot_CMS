@@ -54,7 +54,7 @@ public class Post {
 	private String excerpt;
 	
 	@Column
-	@JsonIgnore
+	//@JsonIgnore
 	@NotBlank(message = "field content cannot be empty!")
 	private String content;
 	

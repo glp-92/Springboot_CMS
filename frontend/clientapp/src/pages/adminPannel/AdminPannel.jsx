@@ -12,7 +12,7 @@ const AdminPannel = () => {
     const [npages, setNPages] = useState(0);
 
     const editPost = (post) => {
-        console.log(post);
+        navigate(`/wpannel/writer`, { state: post })
     }
 
     const handleDeletePost = (id) => {
