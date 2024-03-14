@@ -133,8 +133,9 @@ const AdminPannel = () => {
         if (confirm('Esta accion borrara la Categoria de la base de datos, continuar?')) {
             const success = deletePost();
             if (success) {
-                const newCategories = [...categories];
-                setCategories(newCategories.slice(0, index));
+                //const newCategories = [...categories];
+                //setCategories(newCategories.slice(0, index));
+                window.location.reload();
             }
         }
     }

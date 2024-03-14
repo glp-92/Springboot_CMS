@@ -11,12 +11,12 @@ const Writer = () => {
   const [excerpt, setExcerpt] = useState(postToEdit ? postToEdit.excerpt : '');
   const [content, setContent] = useState(postToEdit ? postToEdit.content : '');
   const [categories, setCategories] = useState([]);
-  const [selectedCategorie, setSelectedCategorie] = useState(postToEdit ? postToEdit.categories[0].id : null);
+  const [selectedCategorie, setSelectedCategorie] = useState(0);
   const [contentPosition, setContentPosition] = useState(null); // Content position se utiliza para traquear la posicion para insertar imagenes o cualquier otra cosa desde el editor rapido
   const [featuredImage, setFeaturedImage] = useState('');
   const [imageMappings, setImageMappings] = useState({}); // Actualmente, las imagenes solo se insertan a traves del icono destinado para ello
   const [errorOnSend, setErrorOnSend] = useState(false);
- 
+
   const readImage = async (imageFile, isMainImage) => { // Se lee imagen, si es la principal se renderizara, si es del content se añadira a un mapping de imagenes clave - imagen
     if (imageFile && isMainImage) {
       setFeaturedImage(imageFile); // Mostrara la imagen de portada, esta imagen es fundamental y requerida por cada post
@@ -41,7 +41,6 @@ const Writer = () => {
       }
       const data = await response.json();
       setCategories(data);
-      setSelectedCategorie(data[0].id);
     } catch (error) {
       setCategories([]);
     }
@@ -97,9 +96,10 @@ const Writer = () => {
   }
 
   useEffect(() => { // Se verifica si se esta logueado actualmente y se redirige al panel de administracion
-    console.log(selectedCategorie);
     getCategories();
-    console.log(selectedCategorie);
+    if (postToEdit && postToEdit.categories.length > 0) {
+      setSelectedCategorie(postToEdit.categories[0].id);
+    }
   }, [])
 
   return (
@@ -132,8 +132,8 @@ const Writer = () => {
         {errorOnSend && featuredImage.length === 0 && <p className="inputPostError">No se ha seleccionado imagen de portada</p>}
         <div>
           <p>Categoria</p>
-          <select onChange={(e) => { setSelectedCategorie(e.target.value) }}>
-            {categories.map(categorie => (
+          <select value={selectedCategorie} onChange={(e) => { setSelectedCategorie(e.target.value) }}>
+            {categories.map((categorie) => (
               <option key={categorie.id} value={categorie.id}>
                 {categorie.name}
               </option>
