@@ -69,14 +69,14 @@ const Writer = () => {
         "featuredPost": false,
         "categoryIds": [selectedCategorie],
       }
-      const body = postToEdit ? { ...commonData, ...{ "postId": postToEdit.id } } : { ...commonData, ...{ "authorId": 1, "slug": slug } }; 
+      const body = postToEdit ? { ...commonData, ...{ "postId": postToEdit.id } } : { ...commonData, ...{ "authorId": 1, "slug": slug } };
       const method = postToEdit ? 'PUT' : 'POST';
       let response = await savePost(
         method,
         token,
         body
       );
-      if (response.ok) { 
+      if (response.ok) {
         let images = [featuredImage];
         let imageNames = [`mainImage.webp`];
         const imageMDRegex = /!\[.*?\]\((.*?)\)/g; // regex image pattern
