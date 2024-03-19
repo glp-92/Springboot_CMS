@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Outlet } from 'react-router-dom';
 import NotFound from '../pages/notfound/NotFound';
-import { ValidateToken } from '../hooks/ValidateToken';
+import { ValidateToken } from '../util/requests/ValidateToken';
 
 const DependsLogged = () => {
 

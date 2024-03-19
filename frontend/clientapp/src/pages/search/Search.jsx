@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PostList from '../../components/postlist/PostList'
 import Pagination from '@mui/material/Pagination';
-import { GetPostList } from '../../hooks/GetPostList';
+import { GetPostList } from '../../util/requests/GetPostList';
 import Loading from '../../components/loading/Loading';
 
 const Search = () => {

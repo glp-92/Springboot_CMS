@@ -14,7 +14,6 @@ import lombok.Setter;
 public class EditPost {
 	private String postId;
 	private String title;
-	private String slug;
 	private String excerpt;
 	private String content;
 	private String date;

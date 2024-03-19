@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Pagination from '@mui/material/Pagination';
-import { GetPostList } from '../../hooks/GetPostList';
+import { GetPostList } from '../../util/requests/GetPostList';
 import { useNavigate } from "react-router-dom";
 
 const AdminPannel = () => {

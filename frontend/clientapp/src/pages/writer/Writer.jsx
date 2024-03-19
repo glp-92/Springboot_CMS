@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { uploadPost } from './../../util/api/UploadPost'
-import { uploadImages } from './../../util/api/UploadImages'
+import { savePost } from '../../util/requests/SavePost'
+import { uploadImages } from '../../util/requests/UploadImages'
+import { getCategories } from "../../util/requests/GetCategories";
+import { cleanNonBlobFromArr } from "../../util/data/CleanNonBlobFromArr";
 
 const Writer = () => {
   const navigate = useNavigate();
@@ -12,14 +14,17 @@ const Writer = () => {
   const [content, setContent] = useState(postToEdit ? postToEdit.content : '');
   const [categories, setCategories] = useState([]);
   const [selectedCategorie, setSelectedCategorie] = useState(0);
-  const [contentPosition, setContentPosition] = useState(null); // Content position se utiliza para traquear la posicion para insertar imagenes o cualquier otra cosa desde el editor rapido
+  const [contentPosition, setContentPosition] = useState(null); // To track the pointer on content
   const [featuredImage, setFeaturedImage] = useState('');
-  const [imageMappings, setImageMappings] = useState({}); // Actualmente, las imagenes solo se insertan a traves del icono destinado para ello
+  const [imageMappings, setImageMappings] = useState({});
   const [errorOnSend, setErrorOnSend] = useState(false);
 
-  const readImage = async (imageFile, isMainImage) => { // Se lee imagen, si es la principal se renderizara, si es del content se añadira a un mapping de imagenes clave - imagen
+  const readImage = async (imageFile, isMainImage) => {
+    /*
+      Read imageFile as a blob, if from the content, key - image pair will be added to imageMappings
+    */
     if (imageFile && isMainImage) {
-      setFeaturedImage(imageFile); // Mostrara la imagen de portada, esta imagen es fundamental y requerida por cada post
+      setFeaturedImage(imageFile);
       return;
     }
     const imageName = imageFile.name;
@@ -28,63 +33,61 @@ const Writer = () => {
     const newContent = content.substring(0, contentPosition) + imgMdCode + content.substring(contentPosition)
     setContent(newContent);
     setImageMappings(prevImageMapping => ({
-      ...prevImageMapping, // Añade al clave valor anterior un nuevo clave valor al añadir una imagen
+      ...prevImageMapping,
       [imageName]: imageFile
     }));
   }
 
-  const getCategories = async () => {
-    try {
-      const response = await fetch(`http://localhost:8080/blog/categorie`);
-      if (!response.ok) {
-        throw new Error(`Error al obtener categorias: ${response.statusText}`);
-      }
-      const data = await response.json();
-      setCategories(data);
-    } catch (error) {
-      setCategories([]);
-    }
-  };
-
   const handleSendPost = async (e) => {
+    /*
+      Send the post to the backend, it's divided on 2 requests
+      1. Send the post content to the backend including path of images to store
+        1.1. If editing, is not needed to send the slug or the authorId
+        1.2. If new post, is needed to send the slug and the authorId
+      2. Send the images to the backend to store them on filesystem if there's at least one blob
+        2.1. Searches for ![]() string on 'content' and extracts the imageName, then, with the mappings, push the blob associated with the imageName to images
+        2.2. If editing, maybe featuredImage won't be changed so backend won't override it, so cleanNonBlobFromArr eliminates non blob images on images var
+    */
     e.preventDefault();
-
     setErrorOnSend(true);
     if (title.length === 0) return
     if (slug.length === 0) return
     if (excerpt.length === 0) return
     if (content.length === 0) return
     if (categories.length === 0) return
-    if (featuredImage.length === 0) return
+    if (featuredImage.length === 0 && !postToEdit) return
 
     try {
       const token = localStorage.getItem("jwt");
-      let response = await uploadPost(
+      const commonData = {
+        "title": title,
+        "slug": slug,
+        "excerpt": excerpt,
+        "content": content,
+        "featuredImage": 'mainImage.webp',
+        "date": null,
+        "featuredPost": false,
+        "categoryIds": [selectedCategorie],
+      }
+      const body = postToEdit ? { ...commonData, ...{ "postId": postToEdit.id } } : { ...commonData, ...{ "authorId": 1, "slug": slug } }; 
+      const method = postToEdit ? 'PUT' : 'POST';
+      let response = await savePost(
+        method,
         token,
-        {
-          "title": title,
-          "slug": slug,
-          "excerpt": excerpt,
-          "content": content,
-          "featuredImage": 'mainImage.webp',
-          "date": null,
-          "featuredPost": false,
-          "categoryIds": [selectedCategorie], // Esto debe cambiarse
-          "authorId": 1 // Esto deberia sacarse del jwt
-        }
+        body
       );
-      if (response.ok) { // Si el post se sube correctamente, envia las imagenes a la API para el almacenamiento local
-        const images = [featuredImage];
-        const imageNames = [`mainImage.webp`];
-        const imageMDRegex = /!\[.*?\]\((.*?)\)/g; // Regex de patron de imagenes en markdown
+      if (response.ok) { 
+        let images = [featuredImage];
+        let imageNames = [`mainImage.webp`];
+        const imageMDRegex = /!\[.*?\]\((.*?)\)/g; // regex image pattern
         let match;
         while ((match = imageMDRegex.exec(content)) !== null) {
-          images.push(imageMappings[match[1]]); // match[1], nombre de imagen
+          images.push(imageMappings[match[1]]); // match[1], image name
           imageNames.push(match[1]);
         }
-        response = await uploadImages(token, slug, images, imageNames);
+        images, imageNames = cleanNonBlobFromArr(images, imageNames);
+        if (images.length != 0) response = await uploadImages(token, slug, images, imageNames);
         setErrorOnSend(false);
-        // console.log("Subida efectiva de POST")
         navigate(`/post/${slug}`);
       }
       else {
@@ -95,10 +98,19 @@ const Writer = () => {
     }
   }
 
-  useEffect(() => { // Se verifica si se esta logueado actualmente y se redirige al panel de administracion
-    getCategories();
-    if (postToEdit && postToEdit.categories.length > 0) {
-      setSelectedCategorie(postToEdit.categories[0].id);
+  useEffect(() => {
+    /*
+      Get categories from backend, if is editing mode, sets categorie id on combobox
+    */
+    const fetchCategories = async () => {
+      const categories = await getCategories();
+      setCategories(categories);
+    }
+    fetchCategories();
+    if (postToEdit) {
+      if (postToEdit.categories.length > 0) {
+        setSelectedCategorie(postToEdit.categories[0].id);
+      }
     }
   }, [])
 
@@ -108,7 +120,7 @@ const Writer = () => {
       <form onSubmit={handleSendPost}>
         <input type="text" placeholder="Titulo" value={title} onChange={(e) => { setTitle(e.target.value) }}></input>
         {errorOnSend && title.length === 0 && <p className="inputPostError">Titulo vacio</p>}
-        <input type="text" placeholder="Slug" value={slug} onChange={(e) => { setSlug(e.target.value) }}></input>
+        <input type="text" placeholder="Slug" disabled={postToEdit} value={slug} onChange={(e) => { setSlug(e.target.value) }}></input>
         {errorOnSend && slug.length === 0 && <p className="inputPostError">Slug vacio</p>}
         <input type="text" placeholder="Resumen" value={excerpt} onChange={(e) => { setExcerpt(e.target.value) }}></input>
         {errorOnSend && excerpt.length === 0 && <p className="inputPostError">Resumen vacio</p>}

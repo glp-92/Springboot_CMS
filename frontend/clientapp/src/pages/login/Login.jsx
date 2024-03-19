@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './Login.css'
 import { Navigate } from 'react-router-dom';
-import { ValidateToken } from '../../hooks/ValidateToken';
+import { ValidateToken } from '../../util/requests/ValidateToken';
 
 const Login = () => {
 

@@ -1,7 +1,7 @@
-export const uploadPost = async (token, postData) => {
+export const savePost = async (method, token, postData) => {
     try {
         const response = await fetch("http://localhost:8080/blog/post", {
-            method: "POST",
+            method: method,
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`

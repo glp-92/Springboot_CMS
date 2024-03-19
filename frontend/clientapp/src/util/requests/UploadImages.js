@@ -1,4 +1,5 @@
 export const uploadImages = async (token, slug, images, imageNames) => {
+    console.log(images, imageNames);
     const formData = new FormData();
 
     let imageNameList = "";

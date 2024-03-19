@@ -77,9 +77,6 @@ public class PostServiceImpl implements PostService {
 		if (request.getFeaturedImage() != null) {
 			post.setExcerpt(request.getFeaturedImage());
 		}
-		if (request.getSlug() != null) {
-			post.setSlug(request.getSlug());
-		}
 		if (request.getFeaturedPost() != null) {
 	        post.setFeaturedPost(request.getFeaturedPost());
 	    }
