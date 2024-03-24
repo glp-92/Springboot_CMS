@@ -27,9 +27,9 @@ const Writer = () => {
       setFeaturedImage(imageFile);
       return;
     }
-    const imageName = imageFile.name;
+    const imageName = imageFile.name.replace(/\s/g, ''); // Delete whitespaces
     const dotIndex = imageName.lastIndexOf('.');
-    const imgMdCode = `\n\n![${imageName.substring(0, dotIndex)}](${imageName})\n\n`; // Inserta la imagen en el content con 2 saltos de linea y el codigo markdown correspondiente
+    const imgMdCode = `\n\n![${imageName.substring(0, dotIndex)}](${imageName})\n\n`; // Inserts md code with 2 lines
     const newContent = content.substring(0, contentPosition) + imgMdCode + content.substring(contentPosition)
     setContent(newContent);
     setImageMappings(prevImageMapping => ({
