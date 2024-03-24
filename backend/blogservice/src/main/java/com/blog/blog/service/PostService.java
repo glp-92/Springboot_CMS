@@ -18,5 +18,4 @@ public interface PostService {
 	Map<String, Object> getPostsFiltered(String keyword, int page, boolean reverse);
 	Post getPostByUri(String postSlug);
 	List<String> uploadImages(List<MultipartFile> imageList, List<String> imagenameList) throws IllegalStateException, IOException;
-	// Post getPostByCategorie(String categorieId);*/
 }

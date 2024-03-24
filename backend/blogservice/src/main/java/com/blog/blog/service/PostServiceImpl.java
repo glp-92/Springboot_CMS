@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -104,6 +106,15 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public boolean deletePost(String postId) {
 		if (postRepo.existsById(Long.valueOf(postId))) {
+			Post post = postRepo.findById(Long.valueOf(postId)).orElse(null);
+			if (post != null) {
+				try {
+					String postImageFolderPath = Paths.get(storagePath).resolve(post.getSlug()).toString();
+					FileUtils.deleteDirectory(new File(postImageFolderPath));
+				}catch (Exception e) {
+				    System.err.println("Error al eliminar el directorio del post: " + e.getMessage());
+				}
+			}
 			postRepo.deleteById(Long.valueOf(postId));
 			return !postRepo.existsById(Long.valueOf(postId));
 		} else {
