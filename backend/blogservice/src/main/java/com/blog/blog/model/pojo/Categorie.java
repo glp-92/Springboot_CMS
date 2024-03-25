@@ -50,7 +50,7 @@ public class Categorie {
 	@PreRemove //Funcion llamada previamente a remover una entidad por JPA
     private void onRemove() {
         for (Post post : posts) {
-            post.getCategories().remove(this);
+            post.getCategories().remove(this); // Remueve la categoria del Post, antes de ser esta eliminada
         }
     }
 }

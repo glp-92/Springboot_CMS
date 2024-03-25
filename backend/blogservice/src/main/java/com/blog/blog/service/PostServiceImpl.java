@@ -18,6 +18,7 @@ import java.util.Set;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -52,8 +53,8 @@ public class PostServiceImpl implements PostService {
     private String storagePath;
     
 	@Override
-	public Post createPost(CreatePost request) {
-		User author = authorRepo.findById(request.getAuthorId()).orElse(null);
+	public Post createPost(CreatePost request, String username) {
+		User author = authorRepo.findByUsername(username).orElse(null);
 		Date date = new Date(System.currentTimeMillis());
 		Set<Categorie> categories = new HashSet<Categorie>(categorieRepo.findAllById(request.getCategoryIds()));
 		Post post = Post.builder().title(request.getTitle()).slug(request.getSlug()).excerpt(request.getExcerpt()).content(request.getContent()).date(date).featuredImage(request.getFeaturedImage()).featuredPost(request.getFeaturedPost()).categories(categories).users(author).build();
@@ -99,6 +100,7 @@ public class PostServiceImpl implements PostService {
 	}
 	
 	@Override
+	@Cacheable("firstPageCache")
 	public List<Post> getAllPosts() {
 		return postRepo.findAll();
 	}
@@ -134,7 +136,7 @@ public class PostServiceImpl implements PostService {
 			results.addAll(postRepo.findByCategoriesContaining(categorie));
 		}
 		else {
-			results.addAll(postRepo.findAll());	
+			results.addAll(getAllPosts());	
 		}
 		Set<Long> postIds = new HashSet<>();
 	    for (Post post : results) {

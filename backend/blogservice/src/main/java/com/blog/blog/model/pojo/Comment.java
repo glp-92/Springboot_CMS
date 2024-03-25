@@ -1,6 +1,7 @@
 package com.blog.blog.model.pojo;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,6 +30,7 @@ import lombok.ToString;
 public class Comment {
 	
 	@Id
+	@JsonIgnore
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
@@ -37,6 +39,7 @@ public class Comment {
 	private String name;
 	
 	@Column
+	@JsonIgnore
 	@NotBlank(message = "field email cannot be empty!")
 	private String email;
 	

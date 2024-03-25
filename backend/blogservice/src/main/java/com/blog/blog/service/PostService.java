@@ -11,7 +11,7 @@ import com.blog.blog.model.request.CreatePost;
 import com.blog.blog.model.request.EditPost;
 
 public interface PostService {
-	Post createPost(CreatePost request); //Al devolver directamente el contenido del post te puede redirigir a la pagina
+	Post createPost(CreatePost request, String username); //Al devolver directamente el contenido del post te puede redirigir a la pagina
 	Post editPost(EditPost request);
 	List<Post> getAllPosts();
 	boolean deletePost(String postId);

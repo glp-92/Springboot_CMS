@@ -67,6 +67,7 @@ public class Post {
 	private String featuredImage;
 	
 	@Column
+	@JsonIgnore
 	@NotNull(message = "field featuredPost cannot be empty!") //NotBlank no se aplica en booleans
 	private Boolean featuredPost;
 	

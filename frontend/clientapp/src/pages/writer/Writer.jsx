@@ -69,7 +69,7 @@ const Writer = () => {
         "featuredPost": false,
         "categoryIds": [selectedCategorie],
       }
-      const body = postToEdit ? { ...commonData, ...{ "postId": postToEdit.id } } : { ...commonData, ...{ "authorId": 1, "slug": slug } };
+      const body = postToEdit ? { ...commonData, ...{ "postId": postToEdit.id } } : { ...commonData, ...{ "slug": slug } };
       const method = postToEdit ? 'PUT' : 'POST';
       let response = await savePost(
         method,

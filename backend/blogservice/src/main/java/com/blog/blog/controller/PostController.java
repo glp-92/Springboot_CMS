@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.blog.blog.model.dto.FullPostDto;
 import com.blog.blog.model.pojo.Post;
 import com.blog.blog.model.request.CreatePost;
 import com.blog.blog.model.request.EditPost;
@@ -55,13 +55,13 @@ public class PostController {
 	}
 	
 	@GetMapping("/post/{postSlug}")
-	public ResponseEntity<FullPostDto> getPostByUri (
+	public ResponseEntity<Post> getPostByUri (
 			@PathVariable String postSlug
 			) {
 		try {
 			Post post = service.getPostByUri(postSlug);
 			if (post != null) {
-				return ResponseEntity.status(HttpStatus.OK).body(new FullPostDto(post));
+				return ResponseEntity.status(HttpStatus.OK).body(post);
 			} 
 			else {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -75,9 +75,10 @@ public class PostController {
 	@PostMapping("/post")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<Post> createPost (
-			@RequestBody CreatePost request) {
+			@RequestBody CreatePost request,
+			@AuthenticationPrincipal String username) {
 		try {
-			Post post = service.createPost(request);
+			Post post = service.createPost(request, username);
 			return ResponseEntity.status(HttpStatus.CREATED).body(post);
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());

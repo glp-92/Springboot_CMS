@@ -11,6 +11,14 @@ const PostContent = ({ postData }) => {
 
     const categories = postData["categories"].map((categorie) => <p className='categorie' key={categorie["id"]}>{categorie["name"]}</p>);
 
+    const comments = postData["comments"].map(
+        (comment) =>
+            <div className='comment' key={comment["id"]}>
+                <p>{comment["name"]}</p>
+                <p>{comment["comment"]}</p>
+            </div>
+    )
+
     return (
         <article>
             <header>
@@ -27,6 +35,10 @@ const PostContent = ({ postData }) => {
                 </Markdown>
             </main>
             <footer>
+                <div>
+                    <p>Comentarios</p>
+                    {comments}
+                </div>
                 <p>{postData["users"]["name"]}</p>
                 {categories}
                 <p>{postData["date"]}</p>

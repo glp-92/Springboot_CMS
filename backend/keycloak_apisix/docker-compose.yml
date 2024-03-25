@@ -1,0 +1,71 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+version: "3"
+
+services:
+  apisix:
+    image: apache/apisix:${APISIX_IMAGE_TAG:-3.8.0-debian}
+    restart: always
+    volumes:
+      - ./apisix_conf/apisix-standalone.yaml:/usr/local/apisix/conf/apisix.yaml:ro
+    environment:
+      - APISIX_STAND_ALONE=true
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Añade a la lista de hosts el internal, necesario para conectarse a MongoDB
+    ports:
+      - "9180:9180/tcp"
+      - "9080:9080/tcp"
+      - "9091:9091/tcp"
+      - "9443:9443/tcp"
+      - "9092:9092/tcp"
+      
+  keycloak:    
+    image: quay.io/keycloak/keycloak:latest  
+    command: start-dev
+    environment:     
+      KC_HTTP_PORT: 9000 
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres_svr
+      KC_DB_URL_DATABASE: db_name
+      KC_DB_PASSWORD: password
+      KC_DB_USERNAME: user_name
+      KC_DB_SCHEMA: public
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      PROXY_ADDRESS_FORWARDING: "true"
+      # FRONTEND_URL: "http://host.docker.internal:9080"
+    ports:      
+      - "9000:9000"      
+    depends_on:      
+      postgres_svr:
+        condition: service_healthy
+
+  postgres_svr: 
+    image: postgres:latest
+    command: postgres -c 'max_connections=200' && postgres -c 'shared_buffers=24MB'    
+    environment:
+      # Environment Variables expecially for Postgres
+      POSTGRES_DB: db_name
+      POSTGRES_USER: user_name
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    healthcheck:
+      test: "exit 0"
+    ports:
+      - "5432:5432"
