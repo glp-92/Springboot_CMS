@@ -38,4 +38,8 @@ Para testar los endpoints desde Postman:
   - client_secret: clientSecret (se extrae en Keycloak -> Selecciona cliente -> Tab `Credentials`)
 2. Si esta correcto, devolvera un código `200` con el `access_token`, se copia
 3. Acceder a un endpoint del controller de SpringBoot protegido para el rol asignado al usuario, añadir el Token en `Authorization` `Bearer access_token`
+
+## Referencias
+
+https://snyk.io/blog/guide-to-input-validation-with-spring-boot/
   

@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.blog.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

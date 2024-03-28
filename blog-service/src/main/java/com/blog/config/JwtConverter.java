@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.blog.config;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
